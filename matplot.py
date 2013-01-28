@@ -134,7 +134,8 @@ class plot(wx.Panel):
 		# specialty plots for a specific data set type.
 		# x1,y1 is plotted on top, and x2,y2 on the bottom
 		
-		
+		#\todo - figure out what to do if these columns aren't the same length
+		# numpy is not happy with trying to make an array out of two different-length plots
 		x1_data = data[:,x1_column]
 		y1_data = data[:,y1_column]
 		x2_data = data[:,x2_column]
@@ -322,7 +323,10 @@ if __name__ == '__main__':
 			Notebook = wx.Notebook(self)
 			
 			plot1 = plot(Notebook)
-			plot1.plot_2d(title="test 2d plot", x_data=[1,2,3,4,5,6],y_data = npy.random.random(6))
+			x_data=[1,2,3,4,5,6]
+			y_data = npy.random.random(6)
+			data=npy.column_stack((x_data,y_data))
+			plot1.plot_2d( data, x_column=0, y_column=1,title="test 2d plot")
 			Notebook.AddPage(plot1, '2d plot - random data')
 			
 			plot2 = plot(Notebook)
@@ -335,8 +339,9 @@ if __name__ == '__main__':
 			
 			plot3 = plot(Notebook)
 			x1 = npy.arange(-10,10,0.5)
-			x2 = npy.arange(0,20,0.75)
-			plot3.plot_2d_double(x1,x1**2,x2,x2**3)
+			x2 = npy.arange(0,20,0.5)
+			data=npy.column_stack((x1,x1**2,x2,x2**3))
+			plot3.plot_2d_double(data,0,1,2,3)
 			Notebook.AddPage(plot3,'double 2dplot')
 			
 	##        panel.Layout()
