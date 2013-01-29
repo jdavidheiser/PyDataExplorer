@@ -89,8 +89,31 @@ class plot(wx.Panel):
 		sizer.Add(self.canvas, 1, wx.LEFT|wx.TOP|wx.GROW)
 		self.SetSizer(sizer)
 		self.Fit()
+		cid = self.fig.canvas.mpl_connect('button_release_event',self.on_mouse_release)
 		
+		# set up default coordinates for 3d plots
+		self.elev_3d = 25
+		self.azim_3d = -45
+		
+		
+	def on_mouse_release(self,event):
+		# attempt to grab the 3d azimuth and elevation - if we are not currently a plot type that supports these variables, this will fail
+		# we intentionally do it here, after the button click, because we might want to add a whole host of other actions that occur upon
+		# button clicks in the future.
+		# this could also be in in clear_figure(), with the current status saved immediately before the figure is erased in preparation
+		# for a new figure to be created.
+		try:
+			self.elev_3d = self.fig.axes[0].elev
+			self.azim_3d = self.fig.axes[0].azim
+		except:
+			pass
+	
 	def clear_figure(self):
+	
+		# if it's a 3d plot, let me know
+
+		#if self.current_plot_type == '3D':
+
 		# This is an awful hack to work around a bug in matplot3d - it creates the axes in a wonky, confusing way, then when you try to clear 
 		# the figure, it confuses the axes list when trying to delete them
 		# the solution is to delete it twice so all the axes get removed, and catch the exception while we are at it.
@@ -191,6 +214,8 @@ class plot(wx.Panel):
 		y_coverage = int(y_coverage)
 		
 		z_data = npy.array(z_data)
+
+		
 		self.clear_figure()
 		# set up some borders
 		# these borders never go away, and screw up the other plots - leave them out until a better way is found to elegently fix them
@@ -198,6 +223,8 @@ class plot(wx.Panel):
 		#self.fig.subplots_adjust(right=0.95)
 		#self.fig.subplots_adjust(top=0.97)
 		#self.fig.subplots_adjust(bottom = 0.03)
+		
+		
 		axes = self.fig.add_subplot(111, projection='3d')
 		
 		# allow us to use the mouse to spin the 3d plot around
@@ -213,9 +240,11 @@ class plot(wx.Panel):
 		axes.set_ylabel(y_axis_label)
 		axes.set_zlabel(z_axis_label)
 		
+		axes.view_init(self.elev_3d,self.azim_3d)
 		self.canvas.draw()
-
-	
+		
+		self.current_plot_type = '3D'
+		
 
 	def dummy_plot(self):
 		#axes = self.fig.add_subplot(111)
