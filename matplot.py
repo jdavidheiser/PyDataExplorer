@@ -17,9 +17,17 @@ error_checking = True
 
 #matplotlib.use('WXAgg')
 
+''' Contains plotting routines
 
+NOTE:  Plotting routines expect data to be passed as transposed - ie each "column"
+is actually a row - this is to enable us to reference the data as:
+data[column] - eliminating need to use numpy arrays or for loops to access the specific chunk
+of data we want'''
 
 def scaleaxislims(x, y):
+	# strip out any None's we've padded with, because they break min and max
+	x = filter(None, x)
+	y = filter(None, y)
 	x_min = min(x)
 	x_max = max(x)
 	# round these values to no more than 3 decimal places so we can get some reasonable limits on the plot!
@@ -51,9 +59,6 @@ def default_axes_setup(axes):
 	axes.grid(True)
 	
 
-# \todo some of the plot panels are built differently in hydrophone.py than others, so some plots require canvas.draw and others don't
-# it probably doesn't hurt anything, except possibly screen flicker, to leave the canvas.draws in here, but if we can
-# fix the GUI code elsewhere, we can get rid of these draw commands.
 
 def compute_3d_coordinates(z_data,x_end,y_end):
 	# assume that Z data is passed as a 2d array X by Y in size, and get the number of points from that
@@ -106,8 +111,8 @@ class plot(wx.Panel):
 			raise ImageException('X data column not specified')
 		if y_column == None:
 			raise ImageException('Y data column not specified')
-		x_data = data[:,x_column]
-		y_data = data[:,y_column]
+		x_data = data[int(x_column)]
+		y_data = data[int(y_column)]
 		self.clear_figure()
 		axes = self.fig.add_subplot(111)
 		axes.cla()
@@ -136,10 +141,10 @@ class plot(wx.Panel):
 		
 		#\todo - figure out what to do if these columns aren't the same length
 		# numpy is not happy with trying to make an array out of two different-length plots
-		x1_data = data[:,x1_column]
-		y1_data = data[:,y1_column]
-		x2_data = data[:,x2_column]
-		y2_data = data[:,y2_column]
+		x1_data = data[int(x1_column)]
+		y1_data = data[int(y1_column)]
+		x2_data = data[int(x2_column)]
+		y2_data = data[int(y2_column)]
 
 		self.clear_figure()
 		axes = self.fig.add_subplot(211)
@@ -184,6 +189,7 @@ class plot(wx.Panel):
 		#\todo use configobj validators to handle this casting
 		x_coverage = int(x_coverage)
 		y_coverage = int(y_coverage)
+		
 		z_data = npy.array(z_data)
 		self.clear_figure()
 		# set up some borders

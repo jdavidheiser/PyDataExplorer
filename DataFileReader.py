@@ -28,6 +28,7 @@ class DataFileReader():
 		f.close()
 		for l in lines:
 			# convert data to float values
-			# uses list comprehension to cycle through each element in the list which describes the delimited values on a single line		
+			# uses list comprehension to cycle through each element in the list which describes the delimited values on a single line
 			self.data.append([float(x) for x in l.rstrip().split(self.delimiter)])
+
 		

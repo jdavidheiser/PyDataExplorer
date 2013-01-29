@@ -33,9 +33,12 @@ import time
 from wx.lib.mixins.listctrl import ColumnSorterMixin
 import matplot
 import sys
-sys.path.append('..\\common')
 from DataFileReader import DataFileReader
-from win32api import GetLogicalDriveStrings
+using_win32api = True
+try:
+	from win32api import GetLogicalDriveStrings
+except:
+	using_win32api = False
 import CustomGrid
 from configobj import ConfigObj
 import numpy as npy
@@ -53,10 +56,10 @@ class FileListCtrl(wx.ListCtrl,ColumnSorterMixin):
 		self.parent = parent
 		wx.ListCtrl.__init__(self, parent, id, style=wx.BORDER_RAISED|wx.LC_REPORT)
 		
-		if extension_list:
-			self.extension_list = extension_list
-		else:
-			self.extension_list = ['wfm','xcn','czs','fzs','rst']
+		if extension_list==None:
+			raise Exception('extension list not specified')
+			
+		self.extension_list = extension_list
 		
 		numcolstosort=4
 		ColumnSorterMixin.__init__(self,numcolstosort)
@@ -118,13 +121,8 @@ class FileListCtrl(wx.ListCtrl,ColumnSorterMixin):
 		self.DeleteAllItems()
 		id = self.GetId()
 
-		
-			
-			
 		files = os.listdir('.')
 		self.itemDataMap = {}
-		
-
 		
 		j = 1
 		index = self.InsertStringItem(0, '..')
@@ -176,7 +174,8 @@ class FileListCtrl(wx.ListCtrl,ColumnSorterMixin):
 		#print "Item selected:", item_name
 		if os.path.isdir(item_name):
 			current_dir = os.getcwd()
-			os.chdir(current_dir + '\\' + item_name + '\\')
+			
+			os.chdir(os.path.join(current_dir,item_name))
 			
 			self.update()
 		event.Skip()
@@ -206,6 +205,7 @@ class ExplorerPanel(wx.Panel):
 		
 		# set up the config file
 		self.config = ConfigObj('config.cfg')
+
 		
 		# get the list of possible extensions from the config file
 		extension_list = self.config['Extensions'].keys()
@@ -235,6 +235,21 @@ class ExplorerPanel(wx.Panel):
 		top_splitter.SplitVertically(self.dir, self.FileList,300)
 				
 		sizer = wx.BoxSizer(wx.VERTICAL)
+		
+
+
+		# add combo box for text representation of current directory
+		if using_win32api:
+			drives = GetLogicalDriveStrings()
+			drives = drives.split('\000')[:-1]
+		else:
+			drives = []
+		self.combobox = wx.ComboBox(self,choices=drives,size=(800,25),style=wx.TE_PROCESS_ENTER)
+		
+		self.Bind(wx.EVT_COMBOBOX,self.OnComboboxSelect,id=self.combobox.GetId())
+		self.Bind(wx.EVT_TEXT_ENTER,self.OnComboboxSelect,id=self.combobox.GetId())
+		sizer.Add(self.combobox,0)
+		# add the master splitter window AFTER the text input box for directory
 		sizer.Add(master_splitter, 1, wx.ALL|wx.EXPAND, 5)
 		
 		self.SetSizer(sizer)
@@ -247,6 +262,17 @@ class ExplorerPanel(wx.Panel):
 		#self.plot.dummy_plot()
 		self.OnDirTreeSelect(0)
 		self.header = None
+		
+	def __del__(self):
+		'''cleanup functions for when the class is destroyed - especially useful for saving the config file
+		if, for example, the panel is being called from another part of the GUI, and being repeatedly created
+		and destroyed, such as when being used as a file open dialog (see DataFileOpenDialog)'''
+		
+		# this ensures that any changes to the config file (ie, current directory information) have been saved
+		# it also ensures that, if the panel is destroyed and re-opened, it is able to read the config file again.
+		self.config.write()
+		wx.Panel.__del__(self)
+
 		
 	def ChangeDirectory(self,path):
 		
@@ -268,13 +294,13 @@ class ExplorerPanel(wx.Panel):
 
 	def OnDirTreeSelect(self, event):
 		# draws list of items defined by files in current directory (upper right window)
-		
-		
 		self.FileList.update(self.dir.GetPath())
 		if event:
 			event.Skip()
 		#make sure the event can be seen by higher level windows
 		#list = os.listdir(self.dir.GetPath())
+		self.UpdateCombobox(event)
+
 		
 	def GetFirstSelectedFilename(self):
 		
@@ -306,9 +332,10 @@ class ExplorerPanel(wx.Panel):
 				headerlines = 0
 			reader.read_from_file(filename+'.'+ext, headerlines)
 			plot_function = getattr(self.plot,cfg['plot_type'])
-			# pass data as a Numpy array so we can manipulate it more easily within individual plot routines
+			# use map to transpose the data and pad any lines that are shorter than the rest with Nones
+			# this allows us to reference 'rows' instead of 'columns' in the plotting routines
 			# pass a reference to the dictionary of all options read from the config file
-			plot_function(npy.array(reader.data),**cfg['options'])
+			plot_function(map(None,*reader.data),**cfg['options'])
 			
 		#\todo Update this to show the data AND the header
 		# in previous usage, the header contained values derived from the raw data - this is not going to be
@@ -320,7 +347,17 @@ class ExplorerPanel(wx.Panel):
 			self.spreadsheet.SetData([])
 
 		event.Skip()
-
+	def UpdateCombobox(self,event):
+		path = os.getcwd()
+		self.combobox.SetValue(path)
+		if not path in self.combobox.GetStrings():
+			self.combobox.Insert(path,0)
+		
+	
+	def OnComboboxSelect(self,event):
+		
+		value = self.combobox.GetValue()
+		self.ChangeDirectory(value)
 
 class ToggledExplorerPanel(wx.Panel):
 	# This is an example that adds toggle buttons to the standard explorer panel - these buttons allow the user to disable
@@ -379,25 +416,15 @@ class DataFileOpenDialog(wx.Dialog):
 	It embeds the Explorer Panel, which includes a directory key, current directory list,
 	and plot preview for the currently highlighted data file, along with Open and Cancel buttons
 	to select a file.  In addition, double-clicking on a data file will select that file.'''
-	def __init__(self, parent, id, title = "Select a data file to open",extension_list = None):
+	def __init__(self, parent, id, title = "Select a data file to open"):
 		wx.Dialog.__init__(self, parent, id, title=title,size=(1024,768),style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 		
 		self.filename = None
 
 		vbox = wx.BoxSizer(wx.VERTICAL)
 		panel = wx.Panel(self)
-		
-		drives = GetLogicalDriveStrings()
-		drives = drives.split('\000')[:-1]
-
-		self.combobox = wx.ComboBox(panel,choices=drives,size=(800,25),style=wx.TE_PROCESS_ENTER)
-		
-		self.Bind(wx.EVT_COMBOBOX,self.OnComboboxSelect,id=self.combobox.GetId())
-		self.Bind(wx.EVT_TEXT_ENTER,self.OnComboboxSelect,id=self.combobox.GetId())
-		vbox.Add(self.combobox,0)
-		
-		self.exp_panel = ExplorerPanel(panel,extension_list = extension_list)
-		wx.EVT_TREE_SEL_CHANGED(self, self.exp_panel.tree.GetId(), self.UpdateCombobox)
+				
+		self.exp_panel = ExplorerPanel(panel)
 
 
 		vbox.Add(self.exp_panel,1,wx.EXPAND)
@@ -418,7 +445,6 @@ class DataFileOpenDialog(wx.Dialog):
 		wx.EVT_LIST_ITEM_ACTIVATED(self, self.exp_panel.FileList.GetId(),self.OnDoubleClick)
 
 		
-		self.UpdateCombobox(0)
 	
 	def OnDoubleClick(self,event):
 		#all the updating stuff is handled in the sub-classes of the explorer panel
@@ -432,17 +458,7 @@ class DataFileOpenDialog(wx.Dialog):
 
 	
 	
-	def UpdateCombobox(self,event):
-		path = os.getcwd()
-		self.combobox.SetValue(path)
-		if not path in self.combobox.GetStrings():
-			self.combobox.Insert(path,0)
-		
-	
-	def OnComboboxSelect(self,event):
-		
-		value = self.combobox.GetValue()
-		self.exp_panel.ChangeDirectory(value)
+
 	def OnCancel(self,event):
 		#self.Close()
 		self.EndModal(wx.ID_CANCEL)
@@ -453,7 +469,7 @@ class DataFileOpenDialog(wx.Dialog):
 		file = self.exp_panel.GetFirstSelectedFilename()
 		if file:
 			current_dir = os.getcwd()
-			print 'onopen called',  file
+			
 			if os.path.isdir(file):
 				pass
 				# This should, theoretically, never be a directory, since the first thing that happens when we double-click a directory is that the explorer panel changes directories
@@ -463,7 +479,7 @@ class DataFileOpenDialog(wx.Dialog):
 				# the bound function and keep the dialog open.
 				# 
 			else:
-				self.filename = current_dir + '\\' + file
+				self.filename = os.path.join(current_dir, file)
 				self.EndModal(wx.ID_OK)
 
 	def GetFilename(self):
