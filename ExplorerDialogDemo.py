@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+
+''' This file contains a demonstration of using the DataExplorerGui DataFileOpenDialog functionality to create a GUI
+where a button can be clicked and load the Data Explorer as a dialog window, such that the user can select a file to open
+and the window used to select the file will show a preview of the data and plot it.
+
+This could be useful in a data postprocessing program, as it provides the ability to visually inspect data files as they are
+selected and fed into the remaining processing steps.'''
+
 import os
 import wx
 import sys, inspect
@@ -66,11 +74,6 @@ class MainFrame(wx.Frame):
 ##        panel.Layout()
 		self.Show(True)
 		
-		# Open the dialog instead of loading as a frame
-##        dia = AMS_File_Dialog.AMSDataFileOpenDialog(self, -1, 'helloAcertara')
-##        retval = dia.ShowModal()
-##        self.Close(True)
-
 app = wx.App(False)
 frame = MainFrame(None, "Python Browser")
 app.MainLoop()

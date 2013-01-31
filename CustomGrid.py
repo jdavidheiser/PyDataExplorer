@@ -1,5 +1,19 @@
-# use wxPython's wx.lib.sheet.CSheet widget
-# to create a simple spread sheet
+''' use wxPython's wx.lib.sheet.CSheet widget
+to create a simple spread sheet.
+This is an extremely simple implementation, which could be expanded greatly, and
+only does some of the very basics needed to make a spreadsheet display panel.
+Some things that could be added:
+- Implementation of copy/paste.  There is some need to be careful here, if you want
+  to maintain broad cross-platform compatibility (cmd-c for Apple, ctrl-c for Win and Linux
+ 
+- More detailed data handling.  For example, the return for Type Name is currently not implemented
+  because it was not necessary for the Data Explorer implementation
+  
+- Allow cell-by-cell editing.  This could allow us to do more sophisticated things, like add mini-postprocessors
+  which automatically do some calculations on the included data, and insert the results of these calculations into the
+  spreadsheet.  If this is implemented, it would be a good idea to do something to signify that a cell contains calculated
+  values, such as changing its color.'''
+
 
 import wx
 import wx.lib.sheet

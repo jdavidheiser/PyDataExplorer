@@ -2,7 +2,7 @@ import numpy as npy
 ##
 #  Contains a generic data file reader class.  The class can be instantiated once, and then called
 #  repeatedly to read in different data files, rather than creating a new class for every read.
-#  data is read from a provided file name, and palced in self.data, and headers are read into self.header
+#  data is read from a provided file name, and placed in self.data, and headers are read into self.header
 class DataFileReader():
 	##
 	#

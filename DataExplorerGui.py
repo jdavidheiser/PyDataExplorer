@@ -44,11 +44,11 @@ from configobj import ConfigObj
 import numpy as npy
 
 class FileListCtrl(wx.ListCtrl,ColumnSorterMixin):
-# File list control is a custom list control that acts as an explorer file list
-# it shows directories and files, and allows navigation by double-clicking
-# on directories, or .. to go up one directory
-# it can be futher embedded in more elaborate panels to provide a fully featured
-# file explorer implemented from the ground up in Python
+	'''File list control is a custom list control that acts as an explorer file list
+	it shows directories and files, and allows navigation by double-clicking
+	on directories, or .. to go up one directory
+	it can be futher embedded in more elaborate panels to provide a fully featured
+	file explorer implemented from the ground up in Python'''
 
 
 	def __init__(self, parent, id=wx.ID_ANY,extension_list = None):
@@ -280,12 +280,12 @@ class ExplorerPanel(wx.Panel):
 		self.FileList.update()
 		
 	def OnDoubleClick(self,event):
-		# This catches the double click event from the file list window.
-		# When you double click on a file in the file list window, it should change
-		# the directory for that file list.
-		# this is handled in the file list panel
-		# it should also update the tree control to display the current directory.
-		# this is handled here
+		'''This catches the double click event from the file list window.
+		When you double click on a file in the file list window, it should change
+		the directory for that file list.
+		this is handled in the file list panel
+		it should also update the tree control to display the current directory.
+		this is handled here'''
 		#self.dir.SetPath(os.getcwd())
 		self.dir.ExpandPath(os.getcwd())
 		event.Skip()
@@ -293,7 +293,7 @@ class ExplorerPanel(wx.Panel):
 	
 
 	def OnDirTreeSelect(self, event):
-		# draws list of items defined by files in current directory (upper right window)
+		''' draws list of items defined by files in current directory (upper right window)'''
 		self.FileList.update(self.dir.GetPath())
 		if event:
 			event.Skip()
@@ -303,7 +303,8 @@ class ExplorerPanel(wx.Panel):
 
 		
 	def GetFirstSelectedFilename(self):
-		
+		''' Grab the first selected file name in the list - if more than one is selected, only care about the first, since we can
+		only plot one at a time.'''
 		index = self.FileList.GetFirstSelected()
 		if index == -1:
 			return None
@@ -360,9 +361,9 @@ class ExplorerPanel(wx.Panel):
 		self.ChangeDirectory(value)
 
 class ToggledExplorerPanel(wx.Panel):
-	# This is an example that adds toggle buttons to the standard explorer panel - these buttons allow the user to disable
-	# the plot and/or spreadsheet window views.  This is extremely handy if you want to, for example, only examine the plots
-	# because you can recover the space used by the spreadsheet view.
+	'''This is an example that adds toggle buttons to the standard explorer panel - these buttons allow the user to disable
+	the plot and/or spreadsheet window views.  This is extremely handy if you want to, for example, only examine the plots
+	because you can recover the space used by the spreadsheet view.'''
 	def __init__(self, parent,id=wx.ID_ANY,extension_list = None):
 		wx.Panel.__init__(self,parent,-1)
 	
@@ -405,7 +406,9 @@ class ToggledExplorerPanel(wx.Panel):
 		self.ExplorerPanel.bottom_panel_sizer.Layout()
 		
 	def OnDoubleClick(self, event):
-		
+		'''Add additional functionality to launch a file when it's double-clicked, just like in a normal explorer-style window.
+		This uses the operating system's built-in file handling fucntionality - for example, file associations via extension
+		in Windows'''
 		file = self.ExplorerPanel.GetFirstSelectedFilename()
 		#print "Item selected:", item_name
 		if file:
@@ -447,9 +450,9 @@ class DataFileOpenDialog(wx.Dialog):
 		
 	
 	def OnDoubleClick(self,event):
-		#all the updating stuff is handled in the sub-classes of the explorer panel
-		#the only thing we want to add here is, if the item selected is a file
-		#we want to open it
+		'''all the updating stuff is handled in the sub-classes of the explorer panel
+		the only thing we want to add here is, if the item selected is a file
+		we want to open it'''
 		
 		# we have already checked if it's a directory or not at this point, and changed directories if it is, so 
 		# let's just call OnOpen()
@@ -472,12 +475,9 @@ class DataFileOpenDialog(wx.Dialog):
 			
 			if os.path.isdir(file):
 				pass
-				# This should, theoretically, never be a directory, since the first thing that happens when we double-click a directory is that the explorer panel changes directories
-				# and the window updates such that no item is currently selected
-				
-				# however, just in case it does somehow get to this point with a directory, due to a network read error or something, don't return the directory name, just quietly pass
-				# the bound function and keep the dialog open.
-				# 
+				''' This should, theoretically, never be a directory, since the first thing that happens when we double-click a directory is that the explorer panel changes directories and the window updates such that no item is currently selected
+				however, just in case it does somehow get to this point with a directory, due to a network read error or something, don't return the directory name, just quietly pass the bound function and keep the dialog open.
+				''' 
 			else:
 				self.filename = os.path.join(current_dir, file)
 				self.EndModal(wx.ID_OK)

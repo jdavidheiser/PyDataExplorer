@@ -1,3 +1,8 @@
+'''This is an extremely simple demo program, which will load up the Data Explorer as a standalone app.
+Espansions upon the functionality of the Data Explorer could be contained here without modifying the core
+Data Explorer GUI library in any way.'''
+
+
 #!/usr/bin/env python
 import os
 import wx
@@ -14,10 +19,6 @@ class MainFrame(wx.Frame):
 		expPanel = DataExplorerGui.ToggledExplorerPanel(self)
 		self.Show(True)
 
-		# Open the dialog instead of loading as a frame
-##        dia = DataExplorerGui.DataFileOpenDialog(self, -1, 'Open a file')
-##        retval = dia.ShowModal()
-##        self.Close(True)
 
 		
 app = wx.App(False)
