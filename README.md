@@ -10,4 +10,4 @@ matplotlib
 numpy
 pywin32
 
-PyDataExplorer is is free to modify, incorporate into closed-source projects, distribute, and duplicate.  Small helper libraries are to be considered public doman, and the core GUI implemention in DataExplorerGui.py is provided under a BSD 2-clause license.
+PyDataExplorer is is free to modify, incorporate into closed-source projects, distribute, and duplicate.  Small helper libraries are to be considered public domain, and the core GUI implementation in DataExplorerGui.py is provided under a BSD 2-clause license.

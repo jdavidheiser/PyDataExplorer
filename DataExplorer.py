@@ -1,5 +1,5 @@
 '''This is an extremely simple demo program, which will load up the Data Explorer as a standalone app.
-Espansions upon the functionality of the Data Explorer could be contained here without modifying the core
+Expansions upon the functionality of the Data Explorer could be contained here without modifying the core
 Data Explorer GUI library in any way.'''
 
 

@@ -162,8 +162,6 @@ class plot(wx.Panel):
 		# specialty plots for a specific data set type.
 		# x1,y1 is plotted on top, and x2,y2 on the bottom
 		
-		#\todo - figure out what to do if these columns aren't the same length
-		# numpy is not happy with trying to make an array out of two different-length plots
 		x1_data = data[int(x1_column)]
 		y1_data = data[int(y1_column)]
 		x2_data = data[int(x2_column)]
