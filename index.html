@@ -37,18 +37,18 @@
 
 <p>PyDataExplorer is intended as a simple, easy-to-modify program for interactive exploration of delimited  text data files, such as those commonly produced during various scientific measurements.  It is designed as a GUI file browser with additional functionality to allow realtime data previews in the form of matplotlib plots and spreadsheet-style grid views. </p>
 
-<p>In addition, each of the components is designed for modular use within your own code.  As an example of one such implementation, a custom "open file" dialog is presented, which pops up the the file browser GUI to allow the user to select a file to open.  When looking through files to open in this popup window, the user sees previews of the data within the files right on the open file dialog, making it easier to ensure that the user is correctly selecting the right data file. </p>
+<p>In addition, each of the components is designed for modular use within your own code.  As an example of one such implementation, a custom "open file" dialog is presented, which pops up the file browser GUI to allow the user to select a file to open.  When looking through files to open in this popup window, the user sees previews of the data within the files, making it easier to ensure that the user is correctly selecting the right data file. </p>
 
 <h3>Dependencies</h3>
 
-<p>The following packages are needed in order to run this PyDataExplorer:</p>
+<p>The following packages are needed in order to run PyDataExplorer:</p>
 
 <ul>
 <li><a href="http://www.wxpython.org/">wxpython</a></li>
 <li><a href="http://matplotlib.org/">matplotlib</a></li>
 <li><a href="http://www.numpy.org/">numpy</a></li>
 <li>
-<a href="http://sourceforge.net/projects/pywin32/">pywin32</a> - only necessary on Windows computers.  This library is provided to allow the Data Explorer the ability to display all possible drive letters on the computer.</li>
+<a href="http://sourceforge.net/projects/pywin32/">pywin32</a> - only necessary on Windows computers.  This library is used to allow the Data Explorer the ability to display all possible drive letters on the computer.</li>
 </ul><h3>License</h3>
 
 <p>PyDataExplorer is is free to modify, incorporate into closed-source projects, distribute, and duplicate. Small helper libraries are to be considered public domain, and the core GUI implementation in DataExplorerGui.py is provided under a BSD 2-clause license.  The full license is provided in the source file.</p>
