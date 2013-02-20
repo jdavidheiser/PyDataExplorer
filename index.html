@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Pydataexplorer : A file browser, implemented in python, designed to interactively plot delimited data files in a wxpython GUI interface" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pydataexplorer</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jdavidheiser/PyDataExplorer">View on GitHub</a>
+
+          <h1 id="project_title">Pydataexplorer</h1>
+          <h2 id="project_tagline">A file browser, implemented in python, designed to interactively plot delimited data files in a wxpython GUI interface</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jdavidheiser/PyDataExplorer/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jdavidheiser/PyDataExplorer/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>PyDataExplorer introduction</h3>
+
+<p>PyDataExplorer is intended as a simple, easy-to-modify program for interactive exploration of delimited  text data files, such as those commonly produced during various scientific measurements.  It is designed as a GUI file browser with additional functionality to allow realtime data previews in the form of matplotlib plots and spreadsheet-style grid views. </p>
+
+<p>In addition, each of the components is designed for modular use within your own code.  As an example of one such implementation, a custom "open file" dialog is presented, which pops up the the file browser GUI to allow the user to select a file to open.  When looking through files to open in this popup window, the user sees previews of the data within the files right on the open file dialog, making it easier to ensure that the user is correctly selecting the right data file. </p>
+
+<h3>Dependencies</h3>
+
+<p>The following packages are needed in order to run this PyDataExplorer:</p>
+
+<ul>
+<li><a href="http://www.wxpython.org/">wxpython</a></li>
+<li><a href="http://matplotlib.org/">matplotlib</a></li>
+<li><a href="http://www.numpy.org/">numpy</a></li>
+<li>
+<a href="http://sourceforge.net/projects/pywin32/">pywin32</a> - only necessary on Windows computers.  This library is provided to allow the Data Explorer the ability to display all possible drive letters on the computer.</li>
+</ul><h3>License</h3>
+
+<p>PyDataExplorer is is free to modify, incorporate into closed-source projects, distribute, and duplicate. Small helper libraries are to be considered public domain, and the core GUI implementation in DataExplorerGui.py is provided under a BSD 2-clause license.  The full license is provided in the source file.</p>
+
+<h3>Running PyDataExplorer</h3>
+
+<p>Two simple standalone app programs are provided, and can be run from the command line:</p>
+
+<p>To run the standalone Data Explorer, run:</p>
+
+<pre><code>$ python DataExplorer.py
+</code></pre>
+
+<p>To see a simple demo of the Data Explorer used as a file dialog, run:</p>
+
+<pre><code>$ python ExplorerDialogDemo.py
+</code></pre>
+
+<h3>Support or Contact</h3>
+
+<p>If you are having any problems, feel free to email <a href="mailto:jdavidheiser@gmail.com">jdavidheiser@gmail.com</a> for questions.  Please submit any feature requests or bug reports under the <a href="https://github.com/jdavidheiser/PyDataExplorer/issues">Github Issues Tab</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pydataexplorer maintained by <a href="https://github.com/jdavidheiser">jdavidheiser</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
